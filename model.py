@@ -1,23 +1,30 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torchvision.models import resnet18, ResNet18_Weights
+from torchvision.models import resnet18, resnet50, ResNet18_Weights, ResNet50_Weights
     
 
 class ResNet(nn.Module):
     '''Base network for student and teacher
 
     Args:
+        backbone (str): feature extractor to use
         layers (list[str]): layers to get feature maps from
         pretrained (bool): whether to get the pretrained version of resnet18
     '''
 
-    def __init__(self, layers: list[str], pretrained: bool) -> None:
+    def __init__(self, backbone: str, layers: list[str], pretrained: bool) -> None:
         super().__init__()
 
-        weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
-        self.res = resnet18(weights=weights)
         self.layers = layers
+        if backbone == 'resnet18':
+            weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
+            self.res = resnet18(weights=weights)
+        elif backbone == 'resnet50':
+            weights = ResNet50_Weights.IMAGENET1K_V2 if pretrained else None
+            self.res = resnet50(weights=weights)
+        else:
+            raise NotImplementedError(f'{backbone} is not a recognized backbone.')
 
     def forward(self, x: torch.Tensor) -> list[torch.Tensor]:
         '''Performs a forward pass through the network
@@ -40,20 +47,21 @@ class STFPM(nn.Module):
     '''Student-teacher feature pyramid matching
     
     Args:
+        backbone (str): feature extractor to use
         layers (list[str]): layers to get feature maps from
         size (int): input size
     '''
     
-    def __init__(self, layers: list[str], size: int) -> None:
+    def __init__(self, backbone: str, layers: list[str], size: int) -> None:
         super().__init__()
 
         # initialize teacher and student
-        self.teacher = ResNet(layers=layers, pretrained=True)
-        self.student = ResNet(layers=layers, pretrained=False)
+        self.teacher = ResNet(backbone=backbone, layers=layers, pretrained=True)
+        self.student = ResNet(backbone=backbone, layers=layers, pretrained=False)
 
         # instantiate upsample
         self.size = size
-        self.upsample = nn.Upsample(size=(self.size, self.size), mode='bilinear')
+        self.upsample = nn.Upsample(size=(size, size), mode='bilinear')
 
         # freeze teacher parameters
         for parameters in self.teacher.parameters():

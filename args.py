@@ -27,7 +27,8 @@ def get_args():
                                                                  'screw',
                                                                  'toothbrush',
                                                                  'transistor',
-                                                                 'zipper'])
+                                                                 'zipper'], help='which category to train the model on')
+    parser.add_argument('--backbone', default='resnet18', help='which network to use as backbone of teacher/student')
     parser.add_argument('--layers', nargs='+', default=['layer1', 'layer2', 'layer3'], help='layers to get feature maps from')
     parser.add_argument('--size', default=256, type=int, help='resize dimension of images')
     parser.add_argument('--device', default='cuda', help='device to train the model on')

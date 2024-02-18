@@ -8,7 +8,7 @@ from args import get_args
 
 if __name__ == '__main__':
     args = get_args()
-    stfpm = STFPM(layers=args.layers, size=args.size).to(args.device)
+    stfpm = STFPM(backbone=args.backbone, layers=args.layers, size=args.size).to(args.device)
 
     if args.mode == 'train':
         train(model=stfpm, args=args)
