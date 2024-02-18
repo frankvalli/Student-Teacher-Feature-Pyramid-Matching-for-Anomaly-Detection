@@ -23,7 +23,7 @@ python main.py -h
 
 For a full list of the possible arguments.
 
-## Results (AUC score)
+## Results (ROC AUC score)
 
 | Category   | Pixel (paper) | Image (paper) | Pixel (this code) | Image (this code) |
 |------------|---------------|---------------|-------------------|-------------------|
@@ -44,7 +44,7 @@ For a full list of the possible arguments.
 | Zipper     | 0.985         | -             | 0.979             | 0.940             |
 | Mean       | 0.970         | 0.955         | 0.967             | 0.955             |
 
-## Result (localization)
+## Results (localization)
 
 ![carpet](images/carpet.png)
 
