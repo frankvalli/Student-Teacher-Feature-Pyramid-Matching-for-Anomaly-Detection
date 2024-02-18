@@ -1,6 +1,6 @@
 # Student-Teacher Feature Pyramid Matching for Anomaly Detection
 
-This repository is an unofficial implementation of the network described in the paper [Wang, G., Han, S., Ding, E., & Huang, D. (2021). Student-Teacher Feature Pyramid Matching for Anomaly Detection. In The British Machine Vision Conference (BMVC)](https://arxiv.org/pdf/2103.04257.pdf).
+This repository is an unofficial implementation of the network described in the paper [Wang, G., Han, S., Ding, E., & Huang, D. (2021). Student-Teacher Feature Pyramid Matching for Anomaly Detection. *The British Machine Vision Conference (BMVC)*](https://arxiv.org/pdf/2103.04257.pdf).
 
 ![STFPM](images/stfpm.png)
 
@@ -23,7 +23,7 @@ python main.py -h
 
 For a full list of the possible arguments.
 
-## Results (AUC score)
+## Results (ROC AUC score)
 
 | Category   | Pixel (paper) | Image (paper) | Pixel (this code) | Image (this code) |
 |------------|---------------|---------------|-------------------|-------------------|
@@ -44,7 +44,7 @@ For a full list of the possible arguments.
 | Zipper     | 0.985         | -             | 0.979             | 0.940             |
 | Mean       | 0.970         | 0.955         | 0.967             | 0.955             |
 
-## Result (localization)
+## Results (localization)
 
 ![carpet](images/carpet.png)
 
