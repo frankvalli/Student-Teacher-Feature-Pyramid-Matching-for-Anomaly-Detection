@@ -28,6 +28,7 @@ def get_args():
                                                                  'toothbrush',
                                                                  'transistor',
                                                                  'zipper'])
+    parser.add_argument('--layers', nargs='+', default=['layer1', 'layer2', 'layer3'], help='layers to get feature maps from')
     parser.add_argument('--size', default=256, type=int, help='resize dimension of images')
     parser.add_argument('--device', default='cuda', help='device to train the model on')
     parser.add_argument('--num_workers', default=2, type=int, help='number of workers')

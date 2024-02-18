@@ -2,35 +2,22 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torchvision.models import resnet18, ResNet18_Weights
-
+    
 
 class ResNet(nn.Module):
     '''Base network for student and teacher
 
     Args:
+        layers (list[str]): layers to get feature maps from
         pretrained (bool): whether to get the pretrained version of resnet18
-            Defaults to `False`
     '''
 
-    def __init__(self, pretrained=False) -> None:
+    def __init__(self, layers: list[str], pretrained: bool) -> None:
         super().__init__()
 
         weights = ResNet18_Weights.IMAGENET1K_V1 if pretrained else None
         self.res = resnet18(weights=weights)
-
-        # register hooks to get intermediate feature maps
-        self.maps = []
-        self._register_hooks()
-        
-    def _register_hooks(self):
-        '''Register forward hooks on conv2_x, conv3_x and conv4_x layers'''
-        def hook(module, input, output):
-            self.maps.append(output)
-        layers = [child for name, child in self.res.named_children() if name.startswith('layer')]
-
-        # register hooks on layers conv2_x, conv3_x and conv4_x
-        for layer in layers[:-1]:
-            layer[-1].register_forward_hook(hook)
+        self.layers = layers
 
     def forward(self, x: torch.Tensor) -> list[torch.Tensor]:
         '''Performs a forward pass through the network
@@ -41,24 +28,28 @@ class ResNet(nn.Module):
         Returns:
             self.maps (list[torch.Tensor]): intermediate feature maps
         '''
-        self.maps = []
-        _ = self.res(x)
-        return self.maps
+        maps = []
+        for name, module in list(self.res.named_children())[:-2]:
+            x = module(x)         
+            if name in self.layers:
+                maps.append(x)
+        return maps
 
-    
+
 class STFPM(nn.Module):
     '''Student-teacher feature pyramid matching
     
     Args:
+        layers (list[str]): layers to get feature maps from
         size (int): input size
     '''
     
-    def __init__(self, size: int) -> None:
+    def __init__(self, layers: list[str], size: int) -> None:
         super().__init__()
 
         # initialize teacher and student
-        self.teacher = ResNet(pretrained=True)
-        self.student = ResNet(pretrained=False)
+        self.teacher = ResNet(layers=layers, pretrained=True)
+        self.student = ResNet(layers=layers, pretrained=False)
 
         # instantiate upsample
         self.size = size
@@ -82,7 +73,7 @@ class STFPM(nn.Module):
         t_maps, s_maps = self.forward(x)
 
         anomaly_map_list = []
-        anomaly_map = torch.ones((b, 256, 256), device=x.device)
+        anomaly_map = torch.ones((b, self.size, self.size), device=x.device)
 
         for t_map, s_map in zip(t_maps, s_maps):
             # normalize feature maps
