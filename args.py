@@ -36,7 +36,7 @@ def get_args():
     parser.add_argument('--lr', default=0.4, type=float, help='learning rate')
     parser.add_argument('--wd', default=1e-4,  type=float, help='weight decay')
     parser.add_argument('--momentum', default=0.9,  type=float, help='momentum')
-    parser.add_argument('--alphas', nargs=3, default=[1., 1., 1.], type=float, help='weights of feature maps for computation of distillation loss')
+    parser.add_argument('--alphas', nargs='+', default=[1., 1., 1.], type=float, help='weights of feature maps for computation of distillation loss')
     parser.add_argument('--batch_size', default=32, type=int, help='batch size')
     parser.add_argument('--mean', nargs=3, default=[0.485, 0.456, 0.406], type=float, help='mean for image normalization')
     parser.add_argument('--std', nargs=3, default=[0.229, 0.224, 0.225], type=float, help='standard deviation for image normalization')
