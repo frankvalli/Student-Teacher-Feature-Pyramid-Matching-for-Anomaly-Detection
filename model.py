@@ -33,7 +33,7 @@ class ResNet(nn.Module):
             x (torch.Tensor): input batch
 
         Returns:
-            self.maps (list[torch.Tensor]): intermediate feature maps
+            maps (list[torch.Tensor]): intermediate feature maps
         '''
         maps = []
         for name, module in list(self.res.named_children())[:-2]:
@@ -104,7 +104,7 @@ class STFPM(nn.Module):
             x (torch.Tensor): input batch
 
         Returns:
-            self.teacher (list): intermediate feature maps of teacher
-            self.student (List[torch.Tensor]): intermediate feature maps of student
+            teacher (list): intermediate feature maps of teacher
+            student (List[torch.Tensor]): intermediate feature maps of student
         '''
         return self.teacher(x), self.student(x)
